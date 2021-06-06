@@ -6,5 +6,6 @@
         public string ImpersonatedUserId { get; set; }
         public string AuthServer { get; set; }
         public string PrivateKeyFile { get; set; }
+        public string BasePath { get; set; }
     }
 }
