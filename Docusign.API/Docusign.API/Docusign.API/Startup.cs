@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,9 +36,16 @@ namespace Docusign.API
             services.Configure<DocusignSettings>(Configuration.GetSection("DocuSign"));
             services.Configure<DocusigJWTSettings>(Configuration.GetSection("DocuSignJWT"));
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.MaxDepth = 3;
+            });
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                var filePath = Path.Combine(AppContext.BaseDirectory, "Docusign.API.xml");
+                c.IncludeXmlComments(filePath);
+            });
             services.AddSwaggerGenNewtonsoftSupport();
 
             services.AddTransient<EnvelopesApi>(BuildEnvelopesApiClient);
