@@ -36,10 +36,9 @@ namespace Docusign.API
             services.Configure<DocusignSettings>(Configuration.GetSection("DocuSign"));
             services.Configure<DocusigJWTSettings>(Configuration.GetSection("DocuSignJWT"));
 
-            services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.MaxDepth = 3;
-            });
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             services.AddSwaggerGen(c =>
             {
@@ -87,8 +86,12 @@ namespace Docusign.API
             var accountService = serviceProvider.GetService<DocusignAccountService>();
 
             var accessToken = accountService.RequestAccessTokenForDocusign();
-            var apiClient = new ApiClient();
+            var account = accountService.GetAccountInfo();
+            var basePath = account.BaseUri + "/restapi";
+
+            var apiClient = new ApiClient(basePath);
             apiClient.Configuration.DefaultHeader.Add("Authorization", "Bearer " + accessToken);
+
             EnvelopesApi envelopesApi = new EnvelopesApi(apiClient);
 
             return envelopesApi;
@@ -100,10 +103,13 @@ namespace Docusign.API
             var accountService = serviceProvider.GetService<DocusignAccountService>();
 
             var accessToken = accountService.RequestAccessTokenForDocusign();
-            var apiClient = new ApiClient();
-            apiClient.Configuration.DefaultHeader.Add("Authorization", "Bearer " + accessToken);
-            TemplatesApi templatesApi = new TemplatesApi(apiClient);
+            var account = accountService.GetAccountInfo();
+            var basePath = account.BaseUri + "/restapi";
 
+            var apiClient = new ApiClient(basePath);
+            apiClient.Configuration.DefaultHeader.Add("Authorization", "Bearer " + accessToken);
+
+            TemplatesApi templatesApi = new TemplatesApi(apiClient);
             return templatesApi;
         }
 

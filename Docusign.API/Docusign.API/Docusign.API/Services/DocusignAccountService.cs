@@ -28,7 +28,8 @@ namespace Docusign.API.Services
         {
             var access_token = RequestAccessTokenForDocusign();
 
-            var apiClient = new ApiClient(_docusignJWTSettings.BasePath);
+            //var apiClient = new ApiClient(_docusignJWTSettings.BasePath);
+            var apiClient = new ApiClient();
             apiClient.SetOAuthBasePath(_docusignJWTSettings.AuthServer);
             UserInfo userInfo = apiClient.GetUserInfo(access_token);
             Account acct = userInfo.Accounts.FirstOrDefault();
@@ -51,7 +52,10 @@ namespace Docusign.API.Services
             var privateKey = DSHelper.ReadFileContent(
                 DSHelper.PrepareFullPrivateKeyFilePath(_docusignJWTSettings.PrivateKeyFile));
 
-            var apiClient = new ApiClient(_docusignJWTSettings.BasePath);
+            // base path is very important!
+            var basePath = _docusignJWTSettings.BasePath;
+            var apiClient = new ApiClient(basePath);
+            
             var tokenResult = apiClient.RequestJWTUserToken(
                 _docusignJWTSettings.ClientId,
                 _docusignJWTSettings.ImpersonatedUserId,
