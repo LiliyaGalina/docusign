@@ -31,7 +31,7 @@ namespace Docusign.API.Services
             //var apiClient = new ApiClient(_docusignJWTSettings.BasePath);
             var apiClient = new ApiClient();
             apiClient.SetOAuthBasePath(_docusignJWTSettings.AuthServer);
-            UserInfo userInfo = apiClient.GetUserInfo(access_token);
+            var userInfo = apiClient.GetUserInfo(access_token);
             Account acct = userInfo.Accounts.FirstOrDefault();
             if (acct == null)
             {
