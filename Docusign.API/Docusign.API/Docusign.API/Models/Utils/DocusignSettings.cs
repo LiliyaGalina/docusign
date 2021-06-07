@@ -8,7 +8,6 @@
         public string TokenEndpoint { get; set; }
         public string UserInformationEndpoint { get; set; }
         public string AppUrl { get; set; }
-        public string RoomsApiEndpoint { get; set; }
         public string SignerEmail { get; set; }
         public string SignerName { get; set; }
         public string GatewayAccountId { get; set; }

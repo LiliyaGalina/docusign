@@ -41,6 +41,18 @@ namespace Docusign.API.Services
             return acct;
         }
 
+        public ApiClient PrepareApiClientConsideringAccount()
+        {
+            var accessToken = RequestAccessTokenForDocusign();
+            var account = GetAccountInfo();
+            var basePath = account.BaseUri + "/restapi";
+
+            var apiClient = new ApiClient(basePath);
+            apiClient.Configuration.DefaultHeader.Add("Authorization", "Bearer " + accessToken);
+
+            return apiClient;
+        }
+
         public string RequestAccessTokenForDocusign()
         {
             var scopes = new List<string>

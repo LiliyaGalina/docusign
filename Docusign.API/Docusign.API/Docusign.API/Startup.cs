@@ -51,7 +51,7 @@ namespace Docusign.API
             services.AddTransient<TemplatesApi>(BuildTemplatesApiClient);
 
             services.AddTransient<DocusignAccountService>();
-
+            services.AddTransient<AuthorizedUserMock>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,33 +82,16 @@ namespace Docusign.API
 
         private EnvelopesApi BuildEnvelopesApiClient(IServiceProvider serviceProvider)
         {
-
             var accountService = serviceProvider.GetService<DocusignAccountService>();
-
-            var accessToken = accountService.RequestAccessTokenForDocusign();
-            var account = accountService.GetAccountInfo();
-            var basePath = account.BaseUri + "/restapi";
-
-            var apiClient = new ApiClient(basePath);
-            apiClient.Configuration.DefaultHeader.Add("Authorization", "Bearer " + accessToken);
-
+            var apiClient = accountService.PrepareApiClientConsideringAccount();
             EnvelopesApi envelopesApi = new EnvelopesApi(apiClient);
-
             return envelopesApi;
         }
 
         private TemplatesApi BuildTemplatesApiClient(IServiceProvider serviceProvider)
         {
-
             var accountService = serviceProvider.GetService<DocusignAccountService>();
-
-            var accessToken = accountService.RequestAccessTokenForDocusign();
-            var account = accountService.GetAccountInfo();
-            var basePath = account.BaseUri + "/restapi";
-
-            var apiClient = new ApiClient(basePath);
-            apiClient.Configuration.DefaultHeader.Add("Authorization", "Bearer " + accessToken);
-
+            var apiClient = accountService.PrepareApiClientConsideringAccount();
             TemplatesApi templatesApi = new TemplatesApi(apiClient);
             return templatesApi;
         }
