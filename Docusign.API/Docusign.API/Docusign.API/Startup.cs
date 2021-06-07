@@ -1,22 +1,13 @@
 using Docusign.API.Models.Utils;
 using Docusign.API.Services;
-using Docusign.API.Utils;
 using DocuSign.eSign.Api;
-using DocuSign.eSign.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Docusign.API
 {
@@ -35,6 +26,8 @@ namespace Docusign.API
 
             services.Configure<DocusignSettings>(Configuration.GetSection("DocuSign"));
             services.Configure<DocusigJWTSettings>(Configuration.GetSection("DocuSignJWT"));
+
+            services.AddCors();
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -67,6 +60,14 @@ namespace Docusign.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(
+                options => options
+                    .AllowAnyHeader()
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+            );
+
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
